@@ -1,19 +1,13 @@
 #!/usr/bin/env bash
-# Prints subdomains for a domain
-
-print_subddomains () {
-  domain="$1"
-  subdomain=${domain%%.*}
-  answer_section=$(dig "$domain" | grep -A1 'ANSWER SECTION:' | grep -v 'ANSWER SECTION:');
-  echo "$answer_section" | awk -v subdomain="$subdomain" '{printf "The subdomain %s is a %s record and points to %s\n", subdomain, $4, $5}';
+# This script will check the subdomain of a given domain
+get_subdomain() {
+    if [ $# -lt 2 ]; then
+        dig www.$1 | grep -A1 'ANSWER SECTION:' | tail -n 1 | awk '{print "The subdomain www is a A record and points to " $5}'
+        dig lb-01.$1 | grep -A1 'ANSWER SECTION:' | tail -n 1 | awk '{print "The subdomain lb-01 is a A record and points to " $5}'
+        dig web-01.$1 | grep -A1 'ANSWER SECTION:' | tail -n 1 | awk '{print "The subdomain web-01 is a A record and points to " $5}'
+        dig web-02.$1 | grep -A1 'ANSWER SECTION:' | tail -n 1 | awk '{print "The subdomain web-02 is a A record and points to " $5}'
+	else
+		dig $2.$1 | grep -A1 'ANSWER SECTION:' | tail -n 1 | awk -v prefix=$2 '{print "The subdomain " prefix " is a A record and points to " $5}'
+    fi
 }
-
-if [ $# -eq 1 ];
-then
-  print_subddomains "www.""$1"
-  print_subddomains "lb-01.""$1"
-  print_subddomains "web-01.""$1"
-  print_subddomains "web-02.""$1"
-else
-  print_subddomains "$2"".""$1"
-fi
+get_subdomain "$@"
