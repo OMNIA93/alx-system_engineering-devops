@@ -1,37 +1,19 @@
 #!/usr/bin/env bash
 # Prints subdomains for a domain
 
-# Check for the existence of the 'dig' command
-if ! command -v dig &> /dev/null; then
-    echo "Error: 'dig' command not found. Please install the dnsutils package or equivalent."
-    exit 1
-fi
-
-# Function to print subdomain information
-print_subdomain_info() {
-    local full_domain="$1"
-    local sub_domain=${full_domain%%.*}
-    
-    local answer_section
-    answer_section=$(dig "$full_domain" +short)
-
-    if [ -z "$answer_section" ]; then
-        echo "No records found for subdomain $sub_domain"
-    else
-        local record_type=$(dig "$full_domain" | awk '/ANSWER SECTION:/ {print $4}')
-        echo "The subdomain $sub_domain is a $record_type record and points to $answer_section"
-    fi
+print_subddomains () {
+  domain="$1"
+  subdomain=${domain%%.*}
+  answer_section=$(dig "$domain" | grep -A1 'ANSWER SECTION:' | grep -v 'ANSWER SECTION:');
+  echo "$answer_section" | awk -v subdomain="$subdomain" '{printf "The subdomain %s is a %s record and points to %s\n", subdomain, $4, $5}';
 }
 
-# Main script
-if [ $# -eq 1 ]; then
-    print_subdomain_info "www.$1"
-    print_subdomain_info "lb-01.$1"
-    print_subdomain_info "web-01.$1"
-    print_subdomain_info "web-02.$1"
-elif [ $# -eq 2 ]; then
-    print_subdomain_info "$2.$1"
+if [ $# -eq 1 ];
+then
+  print_subddomains "www.""$1"
+  print_subddomains "lb-01.""$1"
+  print_subddomains "web-01.""$1"
+  print_subddomains "web-02.""$1"
 else
-    echo "Usage: $0 <domain> [subdomain]"
-    exit 1
+  print_subddomains "$2"".""$1"
 fi
