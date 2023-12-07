@@ -27,7 +27,7 @@ frontend http80
     redirect scheme https code 301 if !{ ssl_fc }
 
 frontend https443
-    bind *:443 ssl crt /etc/haproxy/certs/www.omnia.pem /etc/haproxy/certs/abd elalim.tech.pem
+    bind *:443 ssl crt /etc/haproxy/certs/HLBvuhy69.pem
     mode http
     option forwardfor
     option http-pretend-keepalive

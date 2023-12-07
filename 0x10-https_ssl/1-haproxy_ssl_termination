@@ -20,7 +20,7 @@ global
 
 frontend http80
     bind *:80
-    bind *:443 ssl crt /etc/haproxy/certs/www.omnia.pem /etc/haproxy/certs/abd elalim.tech.pem
+    bind *:443 ssl crt /etc/haproxy/certs/HLBvuhy69.pem    
     redirect scheme https if !{ ssl_fc }
     default_backend allservers
 
